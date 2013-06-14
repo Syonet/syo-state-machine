@@ -54,7 +54,7 @@ $( "#statemchine" ).statemachine( "executeTransition", "transition1" );
 
 **Statemachine**
 
-- ```start``` - String com o id do state inicial ou array com lista de states iniciais.
+- ```start``` - (String | Array) id ou lista de ids dos states iniciais.
 - ```states``` - Array de states.
 
 **State**
