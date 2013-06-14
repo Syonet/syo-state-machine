@@ -1,4 +1,4 @@
-syo-state-machine
+syoStatemachine
 =================
 
 Permite a criação de uma máquina de estados, com a adição de um conceito adicional: a herança.
@@ -45,3 +45,22 @@ $( "#statemchine" ).start();
 $( "#statemchine" ).statemachine( "executeTransition", "transition1" );
 $( "#statemchine" ).statemachine( "executeTransition", "transition1" );
 ```
+
+### Documentação da API
+
+#### Statemachine
+
+* ```states``` - Array de states.
+
+#### State
+
+* ```id``` - Identificador único do state.
+* ```inputActions``` - Array de functions que serão executadas ao entrar no state (Opcional).
+* ```outputActions``` - Array de functions que serão executadas ao sair no state (Opcional).
+* ```transitions``` - Array de transitions que partem do state (Opcional).
+* ```inherits``` - Array de "super-states" (semelhante a super-classes) do state (Opcional).
+
+#### Transition
+
+* ```id``` - Identificador único da transition.
+* ```toState``` - Identificador do state que será selecionado após a execução da transition.
