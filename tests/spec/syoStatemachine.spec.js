@@ -14,8 +14,8 @@
 			states: [
 				{
 					id: "stateA",
-					inputActions: [function() {}],
-					outputActions: [function() {}],
+					inputActions: [ function() {} ],
+					outputActions: [ function() {} ],
 					transitions: [{
 						id: "transition1",
 						toState: "stateB"
@@ -23,8 +23,8 @@
 				},
 				{
 					id: "stateB",
-					inputActions: [function() {}],
-					outputActions: [function() {}],
+					inputActions: [ function() {} ],
+					outputActions: [ function() {} ],
 					transitions: [{
 						id: "transition2",
 						toState: "stateA"
