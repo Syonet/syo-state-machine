@@ -43,7 +43,7 @@ $( "#statemachine" ).statemachine({
     ]
 });
 
-$( "#statemchine" )..statemachine( "start" );
+$( "#statemchine" ).statemachine( "start" );
 $( "#statemchine" ).statemachine( "executeTransition", "transition1" );
 $( "#statemchine" ).statemachine( "executeTransition", "transition2" );
 ```
