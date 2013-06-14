@@ -45,7 +45,7 @@ $( "#statemachine" ).statemachine({
 
 $( "#statemchine" ).start();
 $( "#statemchine" ).statemachine( "executeTransition", "transition1" );
-$( "#statemchine" ).statemachine( "executeTransition", "transition1" );
+$( "#statemchine" ).statemachine( "executeTransition", "transition2" );
 ```
 
 ### Documentação da API
