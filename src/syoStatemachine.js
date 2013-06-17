@@ -96,7 +96,7 @@
 			var transition = this._getSuperTransition( this._currentState, transitionId );
 			
 			if ( !transition ) {
-				throw new Error( "O estado '" + this.currentState.id + "' não possui a transição '" + transition.id + "'!" );
+				throw new Error( "O estado '" + this._currentState.id + "' não possui a transição '" + transitionId + "'!" );
 			}
 			
 			this._executeOutputActions( this._currentState );
