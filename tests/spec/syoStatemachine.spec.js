@@ -256,5 +256,43 @@
 		
 		strictEqual( count, 1, "Executou corretamente as ações" );
 	});
+	
+	test( "Deve executar ações de saída de um super-estado quando um sub-estado deixa de ser o estado atual", function() {
+		expect( 2 );
+		var count = 0;
+		
+		$( "#statemachine" ).statemachine({
+			start: "stateA",
+			states: [{
+				id: "stateA",
+				transitions: [{
+					id: "transition1",
+					toState: "stateB"
+				}],
+				outputActions: [function() {
+					count += 1;
+				}]
+			}, {
+				id: "stateB",
+				inherits: [ "stateA" ],
+				transitions: [{
+					id: "transition2",
+					toState: "stateC"
+				}],
+				outputActions: [function() {
+					count += 1;
+				}]
+			}, {
+				id: "stateC"
+			}]
+		});
+		
+		$( "#statemachine" ).statemachine( "start" );
+		$( "#statemachine" ).statemachine( "executeTransition", "transition1" );
+		strictEqual( count, 0, "Não executou a ação de saída de um estado que tem sub-estados" );
+		
+		$( "#statemachine" ).statemachine( "executeTransition", "transition2" );
+		strictEqual( count, 2, "Executou as ações de saída de um super-estado" );
+	});
 
 }( jQuery ));

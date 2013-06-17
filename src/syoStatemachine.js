@@ -97,6 +97,7 @@
 		},
 		
 		executeTransition: function( transitionId ) {
+			// Descobre o state proprietário da transition
 			var state = this._getStateOfTransition( this._currentState, transitionId );
 			var toState;
 			var transition;
@@ -110,22 +111,16 @@
 			
 			// Se o state destino não herda de origem
 			if ( !found( toState.inherits, state.id ) ) {
-				if ( this._currentState.outputActions ) {
-					for ( var i = 0; i < this._currentState.outputActions.length; i++ ) {
-						this._currentState.outputActions[ i ].apply( this );
-					}
-				}
+				this._executeOutputActions( this._currentState );
+				this._executeSuperOutputActions( state );
 			}
 			
 			this._currentState = toState;
 			
 			// Se o state origem não herda do destino 
 			if ( !found( state.inherits, toState.id ) ) {
-				if ( toState.inputActions ) {
-					for ( var i = 0; i < toState.inputActions.length; i++ ) {
-						toState.inputActions[ i ].apply( this );
-					}
-				}
+				this._executeSuperInputActions( toState );
+				this._executeInputActions( toState );
 			}
 		},
 		
@@ -156,6 +151,46 @@
 			}
 			
 			return null;
+		},
+		
+		_executeInputActions: function( state ) {
+			if ( state.inputActions ) {
+				for ( var i = 0; i < state.inputActions.length; i++ ) {
+					state.inputActions[ i ].apply( this );
+				}
+			}
+		},
+		
+		_executeSuperInputActions: function( state ) {
+			var superState;
+			
+			if ( $.isArray( state.inherits ) ) {
+				for ( var i = 0; i < state.inherits.length; i++ ) {
+					superState = find( this.options.states, state.inherits[ i ] );
+					this._executeInputActions( superState );
+					this._executeSuperInputActions( superState );
+				}
+			}
+		},
+		
+		_executeOutputActions: function( state ) {
+			if ( state.outputActions ) {
+				for ( var i = 0; i < state.outputActions.length; i++ ) {
+					state.outputActions[ i ].apply( this );
+				}
+			}
+		},
+		
+		_executeSuperOutputActions: function( state ) {
+			var superState;
+			
+			if ( $.isArray( state.inherits ) ) {
+				for ( var i = 0; i < state.inherits.length; i++ ) {
+					superState = find( this.options.states, state.inherits[ i ] );
+					this._executeOutputActions( superState );
+					this._executeSuperOutputActions( superState );
+				}
+			}
 		}
 	});
 	
