@@ -14,7 +14,8 @@
 			var state,
 				transition,
 				inputAction,
-				outputAction;
+				outputAction,
+				j;
 			
 			// Valida a máquina de estados
 			if ( !this.options.start ) {
@@ -39,7 +40,7 @@
 				
 				// Valida as transições
 				if ( state.transitions ) {
-					for ( var j = 0; j < state.transitions.length; j++ ) {
+					for ( j = 0; j < state.transitions.length; j++ ) {
 						if ( state.transitions[ j ] ) {
 							if ( !state.transitions[ j ].id ) {
 								throw new Error( "As transições devem ter id!" );
@@ -54,7 +55,7 @@
 				
 				// Valida as ações de entrada
 				if ( state.inputActions ) {
-					for ( var j = 0; j < state.inputActions.length; j++ ) {
+					for ( j = 0; j < state.inputActions.length; j++ ) {
 						if ( !$.isFunction( state.inputActions[ j ] ) ) {
 							throw new Error( "As inputActions devem ser funções!" );
 						}
@@ -63,8 +64,8 @@
 				
 				// Valida as ações de sa�da
 				if ( state.outputActions ) {
-					for ( var i = 0; i < state.outputActions.length; i++ ) {
-						if ( !$.isFunction( state.outputActions[ i ] ) ) {
+					for ( j = 0; j < state.outputActions.length; j++ ) {
+						if ( !$.isFunction( state.outputActions[ j ] ) ) {
 							throw new Error( "As outputActions devem ser funções!" );
 						}
 					}
@@ -88,28 +89,19 @@
 			
 			state = find( this.options.states, stateId );
 			this._currentState = state;
-			
-			if ( state.inputActions ) {
-				for ( var i = 0; i < state.inputActions.length; i++ ) {
-					state.inputActions[ i ].apply( this );
-				}
-			}
+			this._executeInputActions( state );
 		},
 		
 		executeTransition: function( transitionId ) {
 			var transition = this._getSuperTransition( this._currentState, transitionId );
-			var toState;
 			
 			if ( !transition ) {
 				throw new Error( "O estado '" + this.currentState.id + "' não possui a transição '" + transition.id + "'!" );
 			}
 			
-			toState = find( this.options.states, transition.toState );
-			
 			this._executeOutputActions( this._currentState );
-			this._currentState = toState;
-			
-			this._executeInputActions( toState );
+			this._currentState = find( this.options.states, transition.toState );
+			this._executeInputActions( this._currentState );
 		},
 		
 		currentState: function() {
