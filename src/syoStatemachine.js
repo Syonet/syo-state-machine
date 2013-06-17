@@ -98,6 +98,7 @@
 		
 		executeTransition: function( transitionId ) {
 			var state = this._getStateOfTransition( this._currentState, transitionId );
+			var toState;
 			var transition;
 			
 			if ( !state ) {
@@ -105,18 +106,25 @@
 			}
 			
 			transition = find( state.transitions, transitionId );
+			toState = find( this.options.states, transition.toState );
 			
-			if ( this._currentState.outputActions ) {
-				for ( var i = 0; i < this._currentState.outputActions.length; i++ ) {
-					this._currentState.outputActions[ i ].apply( this );
+			// Se o state destino não herda de origem
+			if ( !found( toState.inherits, state.id ) ) {
+				if ( this._currentState.outputActions ) {
+					for ( var i = 0; i < this._currentState.outputActions.length; i++ ) {
+						this._currentState.outputActions[ i ].apply( this );
+					}
 				}
 			}
 			
-			this._currentState = find( this.options.states, transition.toState );
+			this._currentState = toState;
 			
-			if ( this._currentState.inputActions ) {
-				for ( var i = 0; i < this._currentState.inputActions.length; i++ ) {
-					this._currentState.inputActions[ i ].apply( this );
+			// Se o state origem não herda do destino 
+			if ( !found( state.inherits, toState.id ) ) {
+				if ( toState.inputActions ) {
+					for ( var i = 0; i < toState.inputActions.length; i++ ) {
+						toState.inputActions[ i ].apply( this );
+					}
 				}
 			}
 		},
@@ -172,7 +180,11 @@
 	 * Se encontrar retorna true, senão false.
 	 */
 	function found( list, item ) {
-		return ( list.indexOf( item ) != -1 );
+		if ( list ) {
+			return ( list.indexOf( item ) != -1 );
+		}
+		
+		return false;
 	}
 
 }( jQuery ));

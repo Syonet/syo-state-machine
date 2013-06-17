@@ -215,5 +215,46 @@
 		
 		strictEqual( $( "#statemachine" ).statemachine( "currentState" ).id, "stateD", "Executou a transição" );
 	});
+	
+	test( "Deve executar uma transição entre estados relacionados por herança", function() {
+		expect( 1 );
+		var count = 0;
+		
+		$( "#statemachine" ).statemachine({
+			start: "stateA",
+			states: [{
+				id: "stateA",
+				transitions: [{
+					id: "transition1",
+					toState: "stateB"
+				}],
+				inputActions: [function() {
+					count += 1;
+				}],
+				outputActions: [function() {
+					count -= 1;
+				}]
+			}, {
+				id: "stateB",
+				inherits: [ "stateA" ],
+				transitions: [{
+					id: "transition2",
+					toState: "stateA"
+				}],
+				inputActions: [function() {
+					count += 1;
+				}],
+				outputActions: [function() {
+					count -= 1;
+				}]
+			}]
+		});
+		
+		$( "#statemachine" ).statemachine( "start" );
+		$( "#statemachine" ).statemachine( "executeTransition", "transition1" );
+		$( "#statemachine" ).statemachine( "executeTransition", "transition2" );
+		
+		strictEqual( count, 1, "Executou corretamente as ações" );
+	});
 
 }( jQuery ));
