@@ -97,56 +97,39 @@
 		},
 		
 		executeTransition: function( transitionId ) {
-			// Descobre o state proprietário da transition
-			var state = this._getStateOfTransition( this._currentState, transitionId );
+			var transition = this._getSuperTransition( this._currentState, transitionId );
 			var toState;
-			var transition;
 			
-			if ( !state ) {
-				throw new Error( "O estado '" + state.id + "' não possui a transição '" + transitionId + "'!" );
+			if ( !transition ) {
+				throw new Error( "O estado '" + this.currentState.id + "' não possui a transição '" + transition.id + "'!" );
 			}
 			
-			transition = find( state.transitions, transitionId );
 			toState = find( this.options.states, transition.toState );
 			
-			// Se o state destino não herda de origem
-			if ( !found( toState.inherits, state.id ) ) {
-				this._executeOutputActions( this._currentState );
-				this._executeSuperOutputActions( state );
-			}
-			
+			this._executeOutputActions( this._currentState );
 			this._currentState = toState;
 			
-			// Se o state origem não herda do destino 
-			if ( !found( state.inherits, toState.id ) ) {
-				this._executeSuperInputActions( toState );
-				this._executeInputActions( toState );
-			}
+			this._executeInputActions( toState );
 		},
 		
 		currentState: function() {
 			return this._currentState;
 		},
 		
-		/**
-		 * Procura pelo estado que possui a transição "transitionId" a
-		 * partir do estado "state". A pesquisa vai sendo feita de forma
-		 * recursiva para conseguir pesquisar nos super-estados.
-		 */
-		_getStateOfTransition: function( state, transitionId ) {
+		_getSuperTransition: function( state, transitionId ) {
 			var transition = find( state.transitions, transitionId );
 			var superState,
 				auxState;
 			
 			if ( transition ) {
-				return state;
+				return transition;
 			}
 			
 			// Verifica se o estado atual herda de algum(ns) outro(s) estado(s)
 			if ( $.isArray( state.inherits )) {
 				for ( var i = 0; i < state.inherits.length; i++ ) {
 					superState = find( this.options.states, state.inherits[ i ] );
-					return this._getStateOfTransition( superState, transitionId );
+					return this._getSuperTransition( superState, transitionId );
 				}
 			}
 			
@@ -161,34 +144,10 @@
 			}
 		},
 		
-		_executeSuperInputActions: function( state ) {
-			var superState;
-			
-			if ( $.isArray( state.inherits ) ) {
-				for ( var i = 0; i < state.inherits.length; i++ ) {
-					superState = find( this.options.states, state.inherits[ i ] );
-					this._executeInputActions( superState );
-					this._executeSuperInputActions( superState );
-				}
-			}
-		},
-		
 		_executeOutputActions: function( state ) {
 			if ( state.outputActions ) {
 				for ( var i = 0; i < state.outputActions.length; i++ ) {
 					state.outputActions[ i ].apply( this );
-				}
-			}
-		},
-		
-		_executeSuperOutputActions: function( state ) {
-			var superState;
-			
-			if ( $.isArray( state.inherits ) ) {
-				for ( var i = 0; i < state.inherits.length; i++ ) {
-					superState = find( this.options.states, state.inherits[ i ] );
-					this._executeOutputActions( superState );
-					this._executeSuperOutputActions( superState );
 				}
 			}
 		}
